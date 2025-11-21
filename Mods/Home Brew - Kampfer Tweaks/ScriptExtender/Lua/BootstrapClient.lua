@@ -1,3 +1,21 @@
+local function map(table, f)
+    local t = {}
+    for k, v in pairs(table) do
+        t[k] = f(v)
+    end
+    return t
+end
+
+local function filter(table, predicate)
+    local t = {}
+    for k, v in pairs(table) do
+        if predicate(v) then
+            t[k] = v
+        end
+    end
+    return t
+end
+
 local function home_brew_remove_subclasses()
 
     -- Cleric Subclasses
@@ -149,9 +167,33 @@ local function feat_asi_patch()
     end
 end
 
+local function longbow_patch()
+    local weapons = Ext.Stats.GetStats("Weapon")
+    local weaponStats = map(weapons, function(weapon) return Ext.Stats.Get(weapon) end)
+
+    local function is_longbow(weapon_stat)
+        for _, group in pairs(weapon_stat["Proficiency Group"]) do
+            if group == "Longbows" then
+                return true
+            end
+        end
+        return false
+    end
+
+    local longbowStats = filter(weaponStats, is_longbow)
+
+    for _, longbow in pairs(longbowStats) do
+        local props = longbow["Weapon Properties"]
+        table.insert(props, "Finesse")
+        longbow["Weapon Properties"] = props
+        longbow:Sync()
+    end
+end
+
 local function kampfer_patches()
     home_brew_remove_subclasses()
     feat_asi_patch()
+    longbow_patch()
 end
 
 if Ext.Mod.IsModLoaded("67fbbd53-7c7d-4cfa-9409-6d737b4d92a9") then
