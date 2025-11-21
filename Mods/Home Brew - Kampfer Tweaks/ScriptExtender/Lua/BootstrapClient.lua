@@ -1,5 +1,6 @@
 local function home_brew_remove_subclasses()
 
+    -- Cleric Subclasses
     local knowledgeDomain = {
         {
             modGuid = "dd4e8687-c280-457e-971f-30d133f55f8b",
