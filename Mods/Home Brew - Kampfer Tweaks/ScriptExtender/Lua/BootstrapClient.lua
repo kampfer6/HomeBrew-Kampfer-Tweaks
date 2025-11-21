@@ -1,6 +1,5 @@
-if Ext.Mod.IsModLoaded("67fbbd53-7c7d-4cfa-9409-6d737b4d92a9") then
+local function home_brew_remove_subclasses()
 
-    -- Cleric Subclasses
     local knowledgeDomain = {
         {
             modGuid = "dd4e8687-c280-457e-971f-30d133f55f8b",
@@ -83,26 +82,77 @@ if Ext.Mod.IsModLoaded("67fbbd53-7c7d-4cfa-9409-6d737b4d92a9") then
         }
     }
 
-    local function ConfigureSubclassFramework()
-        -- TODO Don't include this into the release version
-        Mods.SubclassCompatibilityFramework.Api.ToggleDebug(true)
+    -- Remove Cleric Subclasses excluded from Home Brew
+    Mods.SubclassCompatibilityFramework.Api.RemoveSubClasses(knowledgeDomain)
+    Mods.SubclassCompatibilityFramework.Api.RemoveSubClasses(lightDomain)
+    Mods.SubclassCompatibilityFramework.Api.RemoveSubClasses(natureDomain)
+    Mods.SubclassCompatibilityFramework.Api.RemoveSubClasses(trickeryDomain)
 
-        -- Remove Cleric Subclasses excluded from Home Brew
-        Mods.SubclassCompatibilityFramework.Api.RemoveSubClasses(knowledgeDomain)
-        Mods.SubclassCompatibilityFramework.Api.RemoveSubClasses(lightDomain)
-        Mods.SubclassCompatibilityFramework.Api.RemoveSubClasses(natureDomain)
-        Mods.SubclassCompatibilityFramework.Api.RemoveSubClasses(trickeryDomain)
+    -- Oathbreaker shouldn't be selectable form the level up menu
+    Mods.SubclassCompatibilityFramework.Api.RemoveSubClasses(oathbreaker)
 
-        -- Oathbreaker shouldn't be selectable form the level up menu
-        Mods.SubclassCompatibilityFramework.Api.RemoveSubClasses(oathbreaker)
-        
-        -- Remove Wizard Subclasses excluded from Home Brew
-        Mods.SubclassCompatibilityFramework.Api.RemoveSubClasses(conjurationWizard)
-        Mods.SubclassCompatibilityFramework.Api.RemoveSubClasses(divinationWizard)
-        Mods.SubclassCompatibilityFramework.Api.RemoveSubClasses(enchantmentWizard)
-        Mods.SubclassCompatibilityFramework.Api.RemoveSubClasses(illusionWizard)
-        Mods.SubclassCompatibilityFramework.Api.RemoveSubClasses(transmutationWizard)
+    -- Remove Wizard Subclasses excluded from Home Brew
+    Mods.SubclassCompatibilityFramework.Api.RemoveSubClasses(conjurationWizard)
+    Mods.SubclassCompatibilityFramework.Api.RemoveSubClasses(divinationWizard)
+    Mods.SubclassCompatibilityFramework.Api.RemoveSubClasses(enchantmentWizard)
+    Mods.SubclassCompatibilityFramework.Api.RemoveSubClasses(illusionWizard)
+    Mods.SubclassCompatibilityFramework.Api.RemoveSubClasses(transmutationWizard)
+end
+
+local remove_selector_template = {
+    {
+        modGuid = "dd4e8687-c280-457e-971f-30d133f55f8b",
+        TargetUUID = "",
+        FileType = "Feat",
+        Function = "SelectAbilities",
+        ListUUID = ""
+    }
+}
+
+local add_selector_template = {
+    {
+        modGuid = "dd4e8687-c280-457e-971f-30d133f55f8b",
+        Target = "",
+        FileType = "Feat",
+        Function = "SelectAbilities",
+        Params = {
+            Guid = "b9149c8e-52c8-46e5-9cb6-fc39301c05fe",
+            Amount = 2,
+            AbilityAmount = 2
+        }
+    }
+}
+
+local function feat_asi_patch()
+    for _, uuid in pairs(Ext.StaticData.GetAll("Feat")) do
+        local feat = Ext.StaticData.Get(uuid, "Feat")
+
+        -- Filter out any feat that allows to pick passives out of Home Brew ASI passive list
+        for _, passive in pairs(feat.SelectPassives) do
+            if passive.UUID == "b9149c8e-52c8-46e5-9cb6-fc39301c05fe" then
+                goto continue
+            end
+        end
+
+        -- There aren't any feats that add ability selectors in Home Brew, but just in case
+        for _, ability in pairs(feat.SelectAbilities) do
+            remove_selector_template[1].TargetUUID = uuid
+            remove_selector_template[1].ListUUID = ability.UUID
+            Mods.SubclassCompatibilityFramework.Api.RemoveSelectors(remove_selector_template)
+        end
+
+        add_selector_template[1].Target = uuid
+        Mods.SubclassCompatibilityFramework.Api.InsertSelectors(add_selector_template)
+
+        ::continue::
     end
+end
 
-    Ext.Events.StatsLoaded:Subscribe(ConfigureSubclassFramework)
+local function kampfer_patches()
+    home_brew_remove_subclasses()
+    feat_asi_patch()
+end
+
+if Ext.Mod.IsModLoaded("67fbbd53-7c7d-4cfa-9409-6d737b4d92a9") then
+    Ext.Events.StatsLoaded:Subscribe(kampfer_patches)
 end
