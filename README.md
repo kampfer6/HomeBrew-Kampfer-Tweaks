@@ -22,3 +22,9 @@ more future-proof.
 Meaning that it doesn't matter how the feats and Longbows are defined, what mod defines them, etc. It wouldn't matter if Haven suddenly decided to add 20 new feats
 or overwrite vanilla ones in some different way. It wouldn't matter if you pulled a mod that adds 200 new longbows to your load order (at least when it comes
 to this patch, anyway - adding extra items from other mods will most likely come with them being unbalanced or inconsistent with Home Brew).
+
+**Q: I heard it through the grapevine that Compatibility Framework doesn't play nice with Home Brew**
+
+**A:** Those rumors probably refere to the fact that new versions of Compatibility Framework automatically inject subclasses into the progressions. Since Haven removed some
+vanilla subclasses in Home Brew, this would lead to you having dead subclasses with no features show up in your level up screen. This patch removes those dead subclasses
+so that they don't pollute the UI, so you are good.
