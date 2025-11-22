@@ -1,19 +1,35 @@
 local function map(table, f)
     local t = {}
-    for k, v in pairs(table) do
-        t[k] = f(v)
+    for i, v in ipairs(table) do
+        t[i] = f(v)
     end
     return t
 end
 
 local function filter(table, predicate)
     local t = {}
-    for k, v in pairs(table) do
+    for i, v in ipairs(table) do
         if predicate(v) then
-            t[k] = v
+            t[#t + 1] = v
         end
     end
     return t
+end
+
+local function is_nil_or_empty(string)
+    return string == nil or string == ''
+end
+
+local function append_stat(base, extra)
+    if is_nil_or_empty(base) then
+        return extra
+    end
+
+    if not base:match(";%s*$") then
+        base = base .. ";"
+    end
+
+    return base .. extra
 end
 
 local function home_brew_remove_subclasses()
@@ -143,18 +159,18 @@ local add_selector_template = {
 }
 
 local function feat_asi_patch()
-    for _, uuid in pairs(Ext.StaticData.GetAll("Feat")) do
+    for _, uuid in ipairs(Ext.StaticData.GetAll("Feat")) do
         local feat = Ext.StaticData.Get(uuid, "Feat")
 
         -- Filter out any feat that allows to pick passives out of Home Brew ASI passive list
-        for _, passive in pairs(feat.SelectPassives) do
+        for _, passive in ipairs(feat.SelectPassives) do
             if passive.UUID == "b9149c8e-52c8-46e5-9cb6-fc39301c05fe" then
                 goto continue
             end
         end
 
         -- There aren't any feats that add ability selectors in Home Brew, but just in case
-        for _, ability in pairs(feat.SelectAbilities) do
+        for _, ability in ipairs(feat.SelectAbilities) do
             remove_selector_template[1].TargetUUID = uuid
             remove_selector_template[1].ListUUID = ability.UUID
             Mods.SubclassCompatibilityFramework.Api.RemoveSelectors(remove_selector_template)
@@ -172,7 +188,7 @@ local function longbow_patch()
     local weaponStats = map(weapons, function(weapon) return Ext.Stats.Get(weapon) end)
 
     local function is_longbow(weapon_stat)
-        for _, group in pairs(weapon_stat["Proficiency Group"]) do
+        for _, group in ipairs(weapon_stat["Proficiency Group"]) do
             if group == "Longbows" then
                 return true
             end
@@ -182,10 +198,16 @@ local function longbow_patch()
 
     local longbowStats = filter(weaponStats, is_longbow)
 
-    for _, longbow in pairs(longbowStats) do
+    for _, longbow in ipairs(longbowStats) do
+        -- Patch in Finesse to every Longbow
         local props = longbow["Weapon Properties"]
         table.insert(props, "Finesse")
         longbow["Weapon Properties"] = props
+
+        -- Patch in Strength usage
+        local strength_patch = "IF(not IsDexterityGreaterThanStrength()):WeaponAttackRollAbilityOverride(Strength)"
+        longbow["DefaultBoosts"] = append_stat(longbow["DefaultBoosts"], strength_patch)
+
         longbow:Sync()
     end
 end
