@@ -25,6 +25,6 @@ to this patch, anyway - adding extra items from other mods will most likely come
 
 **Q: I heard it through the grapevine that Compatibility Framework doesn't play nice with Home Brew**
 
-**A:** Those rumors probably refere to the fact that new versions of Compatibility Framework automatically inject subclasses into the progressions. Since Haven removed some
+**A:** Those rumors probably refer to the fact that new versions of Compatibility Framework automatically inject subclasses into the progressions. Since Haven removed some
 vanilla subclasses in Home Brew, this would lead to you having dead subclasses with no features show up in your level up screen. This patch removes those dead subclasses
 so that they don't pollute the UI, so you are good.
