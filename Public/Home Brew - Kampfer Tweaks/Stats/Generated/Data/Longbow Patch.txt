@@ -1,0 +1,4 @@
+new entry "MAG_StrengthBonusToWeaponDamage_Passive"
+type "PassiveData"
+using "MAG_StrengthBonusToWeaponDamage_Passive"
+data "Boosts" "IF(IsRangedWeaponAttack()):DamageBonus(max(0,StrengthModifier));IF(IsRangedWeaponAttack()):RollBonus(Attack,StrengthModifier)"

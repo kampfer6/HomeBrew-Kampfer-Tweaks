@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<contentList>
+    <content contentuid="h74e822ebgb12fg40b4ga351ge208d1132a4b" version="1">Felling Arrows</content>
+    <content contentuid="h5ca322f7ga82bg4dd2g92a4g070ae478b62a" version="1">When attacking with this weapon, you possibly knock your enemies &lt;LSTag Type="Status" Tooltip="PRONE"&gt;Prone&lt;/LSTag&gt; unless they succeed a Strength based &lt;LSTag Tooltip="SavingThrow"&gt;Saving Throw&lt;/LSTag&gt;.</content>
+</contentList>

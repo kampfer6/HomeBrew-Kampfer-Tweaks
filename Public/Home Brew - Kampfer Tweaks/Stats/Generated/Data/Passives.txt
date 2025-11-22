@@ -1,0 +1,8 @@
+new entry "KAMPF_Titanstring_Prone_Passive"
+type "PassiveData"
+data "DisplayName" "h74e822ebgb12fg40b4ga351ge208d1132a4b;2"
+data "Description" "h5ca322f7ga82bg4dd2g92a4g070ae478b62a;1"
+data "Icon" "PassiveFeature_Generic_Explosion"
+data "StatsFunctorContext" "OnDamage"
+data "Conditions" "AttackedWithPassiveSourceWeapon() and not Self()"
+data "StatsFunctors" "IF(not SavingThrow(Ability.Strength, ManeuverSaveDC())):ApplyStatus(PRONE,100,1)"

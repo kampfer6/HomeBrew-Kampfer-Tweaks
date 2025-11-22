@@ -1,36 +1,4 @@
-local function map(table, f)
-    local t = {}
-    for i, v in ipairs(table) do
-        t[i] = f(v)
-    end
-    return t
-end
-
-local function filter(table, predicate)
-    local t = {}
-    for i, v in ipairs(table) do
-        if predicate(v) then
-            t[#t + 1] = v
-        end
-    end
-    return t
-end
-
-local function is_nil_or_empty(string)
-    return string == nil or string == ''
-end
-
-local function append_stat(base, extra)
-    if is_nil_or_empty(base) then
-        return extra
-    end
-
-    if not base:match(";%s*$") then
-        base = base .. ";"
-    end
-
-    return base .. extra
-end
+Ext.Require("Utils/CommonUtils.lua")
 
 local function home_brew_remove_subclasses()
 
@@ -185,7 +153,7 @@ end
 
 local function longbow_patch()
     local weapons = Ext.Stats.GetStats("Weapon")
-    local weaponStats = map(weapons, function(weapon) return Ext.Stats.Get(weapon) end)
+    local weaponStats = Map(weapons, function(weapon) return Ext.Stats.Get(weapon) end)
 
     local function is_longbow(weapon_stat)
         for _, group in ipairs(weapon_stat["Proficiency Group"]) do
@@ -196,28 +164,39 @@ local function longbow_patch()
         return false
     end
 
-    local longbowStats = filter(weaponStats, is_longbow)
+    local longbowStats = Filter(weaponStats, is_longbow)
 
     for _, longbow in ipairs(longbowStats) do
+        -- Titanstring Bow is a special case
+        if longbow["RootTemplate"] == "13236988-83df-4bf2-8005-b4ac31f21ff4" then
+            -- Add a new passive
+            local passive_patch = "KAMPF_Titanstring_Prone_Passive"
+            longbow["PassivesOnEquip"] = Replace_Or_Append_Stat(longbow["PassivesOnEquip"], nil, passive_patch)
+
+            -- Bump up rarity and raise attunement cost
+            longbow["Rarity"] = "VeryRare"
+            longbow["StatusOnEquip"], longbow["UseCosts"] = Add_Or_Replace_Attunement(longbow["StatusOnEquip"], longbow["UseCosts"], 4)
+        end
+
         -- Patch in Finesse to every Longbow
-        local props = longbow["Weapon Properties"]
-        table.insert(props, "Finesse")
-        longbow["Weapon Properties"] = props
+        -- local props = longbow["Weapon Properties"]
+        -- table.insert(props, "Finesse")
+        -- longbow["Weapon Properties"] = props
 
         -- Patch in Strength usage
         local strength_patch = "IF(not IsDexterityGreaterThanStrength()):WeaponAttackRollAbilityOverride(Strength)"
-        longbow["DefaultBoosts"] = append_stat(longbow["DefaultBoosts"], strength_patch)
+        longbow["DefaultBoosts"] = Replace_Or_Append_Stat(longbow["DefaultBoosts"], nil, strength_patch)
 
         longbow:Sync()
     end
 end
 
-local function kampfer_patches()
+local function kampfer_client_patches()
     home_brew_remove_subclasses()
     feat_asi_patch()
     longbow_patch()
 end
 
 if Ext.Mod.IsModLoaded("67fbbd53-7c7d-4cfa-9409-6d737b4d92a9") then
-    Ext.Events.StatsLoaded:Subscribe(kampfer_patches)
+    Ext.Events.StatsLoaded:Subscribe(kampfer_client_patches)
 end
