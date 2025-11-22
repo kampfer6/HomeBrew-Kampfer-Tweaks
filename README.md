@@ -7,14 +7,15 @@ This mod requires:
 ## Load order
 Load this mod as low as possible. Ideally Home Brew should be as low as possible in your load order, followed by whatever difficulty add-ons you use, unofficial add-ons (those not from Haven) and followed by this.
 
-## What is this
+## What is this?
 
 This is an add-on for the [Home Brew - Comprehensive Reworks](https://www.nexusmods.com/baldursgate3/mods/9052) overhaul by Haven. 
 + It will dynamically patch an option to pick +2 ASI to every feat you have
 + It will patch every longbow in your load order to use Strength modifier for Attack Rolls, if the Strength of your character is more beneficial than Dexterity
 
-**But there are already mods that do that, aren't there?**
-True, but the selling point of this mod is that it uses ScriptExtender to perform those patches dynamically. Rather than manually overwrite every statblock or 
+**Q: But there are already mods that do that, aren't there?**
+
+**A:** True, but the selling point of this mod is that it uses ScriptExtender to perform those patches dynamically. Rather than manually overwrite every statblock or 
 every feat and risking breakage or inconsistency depending on the load order or on the future updates that Haven might do to HomeBrew, this version should be
 more future-proof.
 
