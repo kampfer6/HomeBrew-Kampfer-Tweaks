@@ -19,6 +19,6 @@ This is an add-on for the [Home Brew - Comprehensive Reworks](https://www.nexusm
 every feat and risking breakage or inconsistency depending on the load order or on the future updates that Haven might do to HomeBrew, this version should be
 more future-proof.
 
-Meaning that it doesn't matter how the feats and Longbows defined, what mod defines them, etc. It wouldn't matter if Haven suddenly decided to add 20 new feats
+Meaning that it doesn't matter how the feats and Longbows are defined, what mod defines them, etc. It wouldn't matter if Haven suddenly decided to add 20 new feats
 or overwrite vanilla ones in some different way. It wouldn't matter if you pulled a mod that adds 200 new longbows to your load order (at least when it comes
-to this patch, anyway. Adding extra items in other mods will most likely come with them being unbalanced or inconsistent with Home Brew.
+to this patch, anyway - adding extra items from other mods will most likely come with them being unbalanced or inconsistent with Home Brew).
